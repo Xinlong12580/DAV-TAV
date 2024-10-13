@@ -7,6 +7,7 @@ class DAVTAV_sample_types(Enum):
 
 class DAVTAV_data_types(Enum):
     A="AprimeSignal-Sim"
+    E="Dimuon-particleGunSim"
     B="Background-pythiaGenSim"
     C="SpinQuest-commissioning"
     D="SeaQuest-run6"

@@ -18,13 +18,38 @@ This is an example script intended to demonstrate how to run SQReco in a minimal
 suitable for production use and users should develop their own reconstruction macro for their own analysis.
 */
 
-int RecoData(const int nEvents, std::string top_dir, std::string data_type="SpinQuest-commissioning",std::string infile = "./fileset/digit_run_028694_spill_001415238.root", std::string outfile="ana.root", bool do_displaced_tracking=true,const int runID=6155, const float fac=2,const string reducer="none", const bool coarse=false)
+int RecoData(const std::string top_dir, const std::string data_type="SpinQuest-commissioning", const int nEvents=0, std::string in_file = "./fileset/digit_run_028694_spill_001415238.root", std::string out_file="ana.root", std::string config_file="RecoData_config.ini")
 {
 
-    // Get the current time
 
-    // Convert the time to a string
- 
+  std::map<std::string,std::string> config;
+  std::ifstream c_file(config_file);
+  std::string line;
+  while (std::getline(c_file,line)){
+	std::size_t delimiter_pos=line.find('=');
+	if (delimiter_pos != std::string::npos){
+		std::string key =line.substr(0,delimiter_pos);
+		std::string value = line.substr(delimiter_pos+1);
+		key.erase(0,key.find_first_not_of(" \t"));
+		key.erase(key.find_last_not_of(" \t") +1);
+		value.erase(0, value.find_first_not_of( "\t"));
+		value.erase(value.find_last_not_of(" \t")+1);
+		config[key]=value;
+	}
+  }
+  for (auto pair:config) std::cout<<pair.first<<" : "<<pair.second<<std::endl;
+  const bool do_displaced_tracking=static_cast<bool>(std::stoi(config["do_displaced_tracking"]));
+  const bool coarse=static_cast<bool>(std::stoi(config["coarse"]));
+  const float fac=std::stof(config["fac"]);
+  const std::string reducer=config["reducer"];
+  int runID=0;
+  if (data_type=="SeaQuest-run6") runID=6;
+  if (data_type=="SpinQuest-commissioning") {
+	  int len=in_file.size();
+	  int start=len-30;	  
+	  runID=std::stoi(in_file.substr(start,4));
+  }
+  //std::cout<<do_displaced_tracking<<" "<<coarse<<" "<<fac<<" "<<reducer<<" "<<runID<<std::endl;
   std::string dstfile = "DST.root";
   std::string evalloc = "eval.root";
   std::string vtxevalloc = "vtx_eval.root";
@@ -103,14 +128,14 @@ int RecoData(const int nEvents, std::string top_dir, std::string data_type="Spin
   se->registerSubsystem(vtx_fit);
 
   AnaModule *ana = new AnaModule();
-  ana->set_output_filename(outfile);
+  ana->set_output_filename(out_file);
   ana->set_reco(true);
-  ana->set_additional_information(infile);
+  ana->set_additional_information(in_file);
   se->registerSubsystem(ana);
   if (data_type=="SpinQuest-commissioning"){  
   	Fun4AllInputManager* in = new Fun4AllDstInputManager("DSTIN");
   	in->Verbosity(0);
-  	in->fileopen(infile.c_str());
+  	in->fileopen(in_file.c_str());
   	se->registerInputManager(in);
   }
   else if (data_type=="SeaQuest-run6"){
@@ -119,7 +144,7 @@ int RecoData(const int nEvents, std::string top_dir, std::string data_type="Spin
         in->enable_E1039_translation();
 	in->set_tree_name("save");
 	in->set_branch_name("rawEvent");
-	in->fileopen(infile.c_str());
+	in->fileopen(in_file.c_str());
 	se->registerInputManager(in);
   }
 
