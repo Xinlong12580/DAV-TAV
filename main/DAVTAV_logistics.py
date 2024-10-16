@@ -11,3 +11,15 @@ class DAVTAV_data_types(Enum):
     B="Background-pythiaGenSim"
     C="SpinQuest-commissioning"
     D="SeaQuest-run6"
+
+class DAVTAV_AprimeSignal_Sim_ana_types(Enum):
+    A=None
+
+class DAVTAV_Dimuon_particleGunSim_ana_types(Enum):
+    A=None
+
+class DAVTAV_SpinQuest_commissioning_ana_types(Enum):
+    A=None
+
+class DAVTAV_SeaQuest_run6_ana_types(Enum):
+    A=None

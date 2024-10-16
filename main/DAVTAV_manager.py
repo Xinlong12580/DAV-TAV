@@ -8,7 +8,7 @@ from DAVTAV_ana import DAVTAV_ana
 from DAVTAV_comp import DAVTAV_comp
 from DAVTAV_logistics import DAVTAV_sample_types, DAVTAV_data_types
 class DAVTAV_manager:
-    def __init__(self, branches,sample_type,data_type):
+    def __init__(self, branches,sample_type,data_type,random_tag=None,ana_type="All"):
         if sample_type not in DAVTAV_sample_types._value2member_map_:
             raise ValueError("Invalid sample type!")
         if data_type not in DAVTAV_data_types._value2member_map_ and data_type != "All":
@@ -20,17 +20,22 @@ class DAVTAV_manager:
         self.data_type=data_type
         self.sample_top_dir="../samples/"+sample_type
         self.grid_on=False
-        self.random_tag=''.join(secrets.choice(string.digits) for _ in range(4))
+        self.random_tag="1234"
+        if random_tag==None:
+            self.random_tag=''.join(secrets.choice(string.digits) for _ in range(4))
+        else:
+            self.random_tag=random_tag
         self.branch_tag=[]
         for branch in self.branches:
             branch_name=subprocess.check_output(["git","-C",branch+"/e1039-core","rev-parse","--abbrev-ref","HEAD"],universal_newlines=True).strip()
-            commit_time=subprocess.check_output(["git","-C",branch+"/e1039-core","log","-1","--format=%cd"],universal_newlines=True).strip()
+            commit_time=subprocess.check_output(["git","-C",branch+"/e1039-core","log","-1","--format=%cd"],universal_newlines=True).strip().replace(" ","")
             commit_hash=subprocess.check_output(["git","-C",branch+"/e1039-core","log","-1","--format=%H"],universal_newlines=True).strip()
-            tag=branch_name+"%$"+commit_time+"%$"+commit_hash+"%$"+self.random_tag
+            tag=branch_name+"@@"+commit_time+"@@"+commit_hash+"@@"+self.random_tag
             self.branch_tag.append(tag)
         self.reco_tag=self.branch_tag
         self.ana_tag=self.reco_tag
         self.comp_tag=None
+        self.ana_type=ana_type
         if len(self.ana_tag)==2:
             self.comp_tag=self.ana_tag[0]+"%$"+self.ana_tag[1]
         
@@ -50,7 +55,7 @@ class DAVTAV_manager:
             if self.data_type != "All":
                 sample_file=self.sample_top_dir+"/"+self.data_type+"/DAVTAV_raw_list.txt"
                 sample_files.append(sample_file)
-                output_dir=self.reco_top_dir[i]+"/"+self.sample_type
+                output_dir=self.reco_top_dir[i]+"/"+self.data_type
                 output_dirs.append(output_dir)
                 subprocess.run(["mkdir","-p",output_dir])
             else:
@@ -74,8 +79,8 @@ class DAVTAV_manager:
                     DReco.Report()
     
     def Ana(self):
-        for reco_file in [1]:#reco_files:
-            DAna=DAVTAV_ana()
+        for a_tag in self.ana_tag:
+            DAna=DAVTAV_ana(self.top_dir,a_tag,self.sample_type,self.data_type,self.ana_type)
             DAna.Run()
         
 

@@ -25,7 +25,9 @@ int RecoData(const std::string top_dir, const std::string data_type="SpinQuest-c
   std::map<std::string,std::string> config;
   std::ifstream c_file(config_file);
   std::string line;
+  std::cout<<config_file<<std::endl;
   while (std::getline(c_file,line)){
+	  std::cout<<line<<std::endl;
 	std::size_t delimiter_pos=line.find('=');
 	if (delimiter_pos != std::string::npos){
 		std::string key =line.substr(0,delimiter_pos);
@@ -38,6 +40,7 @@ int RecoData(const std::string top_dir, const std::string data_type="SpinQuest-c
 	}
   }
   for (auto pair:config) std::cout<<pair.first<<" : "<<pair.second<<std::endl;
+  //return 0;
   const bool do_displaced_tracking=static_cast<bool>(std::stoi(config["do_displaced_tracking"]));
   const bool coarse=static_cast<bool>(std::stoi(config["coarse"]));
   const float fac=std::stof(config["fac"]);
@@ -52,7 +55,7 @@ int RecoData(const std::string top_dir, const std::string data_type="SpinQuest-c
   //std::cout<<do_displaced_tracking<<" "<<coarse<<" "<<fac<<" "<<reducer<<" "<<runID<<std::endl;
   std::string dstfile = "DST.root";
   std::string evalloc = "eval.root";
-  std::string vtxevalloc = "vtx_eval.root";
+  std::string vtxevalloc = top_dir+"/main/cpp_modules/dump/vtx_eval.root";
   const bool cosmic = false;
 
   const bool legacy_rec_container = true;
@@ -150,8 +153,8 @@ int RecoData(const std::string top_dir, const std::string data_type="SpinQuest-c
 
 
 
-  Fun4AllDstOutputManager* out = new Fun4AllDstOutputManager("DSTOUT", dstfile);
-  se->registerOutputManager(out);
+  //Fun4AllDstOutputManager* out = new Fun4AllDstOutputManager("DSTOUT", dstfile);
+  //se->registerOutputManager(out);
 
   se->run(nEvents);
 

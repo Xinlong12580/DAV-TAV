@@ -68,15 +68,14 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
   	}
     }
     for (auto pair:config) std::cout<<pair.first<<" : "<<pair.second<<std::endl;
-    return 0;
     double zvertex = -300; // target_coil_pos_z
     const bool do_displaced_tracking = true;
     const bool do_analysis = true;
     bool run_pileup=false;
     std::string pileup_file= "/pnfs/e1039/persistent/users/apun/bkg_study/e1039pythiaGen_26Oct21/10_bkge1039_pythia_wshielding_100M.root";
     const int verbosity=0;
-    int isim=1;
-    int igun=0;
+    int isim=3;
+    int igun=10;
     if(data_type=="AprimeSignal-Sim"){
 	    isim=1;
     }
@@ -143,6 +142,8 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         case 9: // pi0 gun
             particle_name = "pi0";
             break;
+	case 10:
+	    particle_name="dimuon";
         }
         std::cout << " " << particle_name << " GUN " << std::endl;
         break;
@@ -167,9 +168,6 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         run_pileup = true;
         std::cout << " DO Background Only. Set the run_pileup to true " << std::endl;
         break;
-    case 9:
-	do_dimuon_gun=true;
-	break;
     }
 
     /** Verbosity (https://github.com/E1039-Collaboration/e1039-core/blob/master/framework/fun4all/Fun4AllBase.h#L33-L55)
@@ -290,7 +288,7 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         hr->Verbosity(verbosity);
         se->registerSubsystem(hr);
     }
-    else if (do_gun)
+    else if (do_gun && particle_name !="dimuon")
     { // single particle gun
         PHG4SimpleEventGenerator *genp = new PHG4SimpleEventGenerator("PARTICLEGUN");
 	genp->add_particles(particle_name.c_str(), 1);
@@ -308,9 +306,12 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         genp->Verbosity(verbosity);
         se->registerSubsystem(genp);
     }
-    else if (do_dimuon_gun)
+    else if (do_gun && particle_name=="dimuon")
     { // single particle gun
-	zvertex=std::stof(in_file);
+        size_t colon_pos=in_file.find(':');	
+	zvertex=std::stof(in_file.substr(0,colon_pos));
+	float mom_z=std::stof(in_file.substr(colon_pos+1));
+
         PHG4SimpleEventGenerator *genp = new PHG4SimpleEventGenerator("DIMUONGUN");
 	genp->add_particles("mu-", 1);
 
@@ -319,16 +320,18 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
                                                PHG4SimpleEventGenerator::Uniform);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(0.0,10.0);
-	float pos_x=dis(gen);
-	float pos_y=dis(gen);
-	
+	std::uniform_real_distribution<> dis_pos(0.0,10.0);
+	std::uniform_real_distribution<> dis_mom(0.0,mom_z);
+	float pos_x=dis_pos(gen);
+	float pos_y=dis_pos(gen);
+	float mom_z1=dis_mom(gen);
+	float mom_z2=dis_mom(gen);	
         genp->set_vertex_distribution_mean(pos_x, pos_y, zvertex); // to set after FMAG: zvertex: 520
         genp->set_vertex_distribution_width(0, 0, 0.0);    // for protons set to 10.0 in z?
         genp->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
         genp->set_vertex_size_parameters(0.0, 0.0);
-
-        genp->set_pxpypz_range(-.15, .15, -.15, .15, 10., 100.);
+	
+        genp->set_pxpypz_range(-.15, .15, -.15, .15, mom_z1, mom_z1);
 	
 	genp->add_particles("mu+", 1);
 
@@ -340,7 +343,7 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         genp->set_vertex_size_function(PHG4SimpleEventGenerator::Uniform);
         genp->set_vertex_size_parameters(0.0, 0.0);
 
-        genp->set_pxpypz_range(-.15, .15, -.15, .15, 10., 100.);
+        genp->set_pxpypz_range(-.15, .15, -.15, .15, mom_z2, mom_z2);
         genp->Verbosity(verbosity);
         se->registerSubsystem(genp);
     }
