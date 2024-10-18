@@ -52,15 +52,23 @@ int DoEmbedding::Init(PHCompositeNode* topNode)
 
 int DoEmbedding::InitRun(PHCompositeNode* topNode)
 {
-  mi_evt     = findNode::getClass<SQEvent       >(topNode, "SQEvent");
-  mi_vec_hit = findNode::getClass<SQHitVector   >(topNode, "SQHitVector");
-  if (!mi_evt || !mi_vec_hit) {
-    cout << PHWHERE << ":  Cannot find SQEvent and/or SQHitVector." << endl;
-    return Fun4AllReturnCodes::ABORTEVENT;
-  }
+  //if (!mi_evt || !mi_vec_hit) {
+    //cout << PHWHERE << ":  Cannot find SQEvent and/or SQHitVector." << endl;
+    //return Fun4AllReturnCodes::ABORTEVENT;
+  //}
 
   PHNodeIterator iter(topNode);
   PHCompositeNode *dstNode = dynamic_cast<PHCompositeNode*>(iter.findFirst("PHCompositeNode", "DST"));
+  mi_evt     = findNode::getClass<SQEvent       >(topNode, "SQEvent");
+  if (! mi_evt) {
+    mi_evt = new SQEvent_v1();
+    dstNode->addNode(new PHIODataNode<PHObject>(mi_evt, "SQEvent", "PHObject"));
+  }
+mi_vec_hit = findNode::getClass<SQHitVector   >(topNode, "SQHitVector");
+  if (! mi_vec_hit) {
+    mi_vec_hit = new SQHitVector_v1();
+    dstNode->addNode(new PHIODataNode<PHObject>(mi_vec_hit, "SQHitVector", "PHObject"));
+  }
   mi_sim_evt = findNode::getClass<SQMCEvent>(topNode, "SQMCEvent");
   if (! mi_sim_evt) {
     mi_sim_evt = new SQMCEvent_v1();

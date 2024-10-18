@@ -47,7 +47,7 @@ int SimAna::InitRun(PHCompositeNode *topNode)
     int ret = GetNodes(topNode);
     if (ret != Fun4AllReturnCodes::EVENT_OK)
         return ret;
-
+    event_number=0;
     eventID = 0;
     ResetEvalVars();
     MakeTree();
@@ -486,7 +486,8 @@ int SimAna::process_event(PHCompositeNode *topNode)
 {
     // reset variables to max.
     ResetEvalVars();
-
+    std::cout<<"EVENT_NUMBER: "<<event_number<<std::endl;
+    event_number++;
     // save hits by default
     n_hits = 0;
     std::map<int, int> list_cnt; // [det ID] -> hit count

@@ -77,7 +77,7 @@ endif()
 
 
 
-set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "/seaquest/users/xinlongl/projects/debug/core-inst/include;/exp/seaquest/app/software/osg/software/e1039/share/20240816/include;/usr/include/c++/11;/usr/include/c++/11/x86_64-redhat-linux;/usr/include/c++/11/backward;/usr/lib/gcc/x86_64-redhat-linux/11/include;/usr/local/include;/usr/include")
+set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "/seaquest/users/xinlongl/projects/Pro_DarkQuest_Sim/core-software/core-inst/include;/exp/seaquest/app/software/osg/software/e1039/share/20240816/include;/usr/include/c++/11;/usr/include/c++/11/x86_64-redhat-linux;/usr/include/c++/11/backward;/usr/lib/gcc/x86_64-redhat-linux/11/include;/usr/local/include;/usr/include")
 set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "stdc++;m;gcc_s;gcc;c;gcc_s;gcc")
-set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "/exp/seaquest/app/software/osg/software/e1039/share/20240816/lib64;/usr/lib/gcc/x86_64-redhat-linux/11;/usr/lib64;/lib64;/seaquest/users/xinlongl/projects/debug/core-inst/lib;/exp/seaquest/app/software/osg/software/e1039/share/20240816/lib;/usr/lib")
+set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "/exp/seaquest/app/software/osg/software/e1039/share/20240816/lib64;/usr/lib/gcc/x86_64-redhat-linux/11;/usr/lib64;/lib64;/seaquest/users/xinlongl/projects/Pro_DarkQuest_Sim/core-software/core-inst/lib;/exp/seaquest/app/software/osg/software/e1039/share/20240816/lib;/usr/lib")
 set(CMAKE_CXX_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

@@ -244,8 +244,8 @@ CMakeFiles/sim_ana.dir/sim_ana_Dict.cc.o: \
  /usr/include/c++/11/bits/forward_list.tcc \
  /exp/seaquest/app/software/osg/software/e1039/share/20240816/root/include/TDataMember.h \
  /seaquest/users/xinlongl/projects/DAV-TAV/main/cpp_modules/MC_module_src/DoEmbedding.h \
- /seaquest/users/xinlongl/projects/debug/core-inst/include/fun4all/SubsysReco.h \
- /seaquest/users/xinlongl/projects/debug/core-inst/include/fun4all/Fun4AllBase.h \
+ /seaquest/users/xinlongl/projects/Pro_DarkQuest_Sim/core-software/core-inst/include/fun4all/SubsysReco.h \
+ /seaquest/users/xinlongl/projects/Pro_DarkQuest_Sim/core-software/core-inst/include/fun4all/Fun4AllBase.h \
  /usr/include/c++/11/climits \
  /usr/lib/gcc/x86_64-redhat-linux/11/include/limits.h \
  /usr/lib/gcc/x86_64-redhat-linux/11/include/syslimits.h \

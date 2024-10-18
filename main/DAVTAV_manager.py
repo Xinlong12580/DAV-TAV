@@ -18,8 +18,9 @@ class DAVTAV_manager:
         self.branches=branches
         self.sample_type=sample_type
         self.data_type=data_type
-        self.sample_top_dir="../samples/"+sample_type
+        self.sample_top_dir=self.top_dir+"/samples/"+sample_type
         self.grid_on=False
+        self.mute=False
         self.random_tag="1234"
         if random_tag==None:
             self.random_tag=''.join(secrets.choice(string.digits) for _ in range(4))
@@ -67,14 +68,14 @@ class DAVTAV_manager:
                     subprogress.run(["mkdir","-p",output_dir])
             
             if self.data_type !="All":
-                DReco=DAVTAV_reco(sample_files[0],self.data_type,output_dirs[0],self.grid_on,self.top_dir)
+                DReco=DAVTAV_reco(sample_files[0],self.data_type,output_dirs[0],self.grid_on,branch,self.top_dir)
                 print("chekcpoint1")
                 DReco.Run()
                 DReco.Report()
             else:
                 for j in len(DAVTAV_data_types._value2member_map_):
                     d_type=DAVTAV_data_types._value2member_map_[j]
-                    DReco=DAVTAV_reco(sample_files[j],d_type,output_dirs[j],self.grid_on)
+                    DReco=DAVTAV_reco(sample_files[j],d_type,output_dirs[j],self.grid_on,branch,self.top_dir)
                     DReco.Run()
                     DReco.Report()
     

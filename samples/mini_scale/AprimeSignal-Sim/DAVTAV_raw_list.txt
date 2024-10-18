@@ -1,1 +1,3 @@
 /seaquest/users/xinlongl/projects/DAV-TAV/samples/mini_scale/AprimeSignal-Sim/Brem_0.250000_z500_600_eps_-3.6.txt
+/seaquest/users/xinlongl/projects/DAV-TAV/samples/mini_scale/AprimeSignal-Sim/Brem_1.650000_z500_600_eps_-3.txt
+/seaquest/users/xinlongl/projects/DAV-TAV/samples/mini_scale/AprimeSignal-Sim/Brem_2.650000_z500_600_eps_-4.5.txt

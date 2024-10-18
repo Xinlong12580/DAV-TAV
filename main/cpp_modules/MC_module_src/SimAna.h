@@ -109,6 +109,7 @@ private:
     std::string saveName;
 
     TFile* saveFile;
+    int event_number;
     int eventID;
     TTree* saveTree;
 

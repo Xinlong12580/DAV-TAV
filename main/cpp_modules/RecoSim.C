@@ -52,6 +52,8 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
 		 std::string config_file="RecoSim_config.ini"
 	   )
 {
+    std::random_device rd;
+    std::mt19937 gen(rd());
     std::map<std::string,std::string> config;
     std::ifstream c_file(config_file);
     std::string line;
@@ -73,6 +75,11 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
     const bool do_analysis = true;
     bool run_pileup=false;
     std::string pileup_file= "/pnfs/e1039/persistent/users/apun/bkg_study/e1039pythiaGen_26Oct21/10_bkge1039_pythia_wshielding_100M.root";
+    std::uniform_int_distribution<> dist_em(0,100);
+    int file_tag=dist_em(gen);
+    std::stringstream ss;
+    ss<< std::setw(4)<<std::setfill('0')<<file_tag;
+    std::string embedding_file=std::string("/pnfs/e1039/persistent/users/kenichi/data_emb_e906/")+ss.str()+"/embedding_data.root";
     const int verbosity=0;
     int isim=3;
     int igun=10;
@@ -192,7 +199,7 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
     const bool do_absorber = true;
     const bool do_dphodo = true;
     const bool do_station1DC = false; // station-1 drift chamber should be turned off by default
-    const bool doEMCal = false;       // emcal turned off (for SpinQuest)
+    const bool doEMCal = true;       // emcal turned off (for SpinQuest)
 
     // SpinQuest constants
     const double target_coil_pos_z = -300;
@@ -318,8 +325,6 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         genp->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
                                                PHG4SimpleEventGenerator::Uniform,
                                                PHG4SimpleEventGenerator::Uniform);
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis_pos(0.0,10.0);
 	std::uniform_real_distribution<> dis_mom(0.0,mom_z);
 	float pos_x=dis_pos(gen);
@@ -473,6 +478,19 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
         geom_acc->SetPlaneMode(SQGeomAcc::HODO_CHAM);
         // geom_acc->SetNumOfH1EdgeElementsExcluded(4);
         se->registerSubsystem(geom_acc);
+        }
+    if (do_aprime_muon){
+     	DoEmbedding *do_emb=new DoEmbedding();
+     	do_emb->Verbosity();
+     	do_emb->AddEmbDataFile(embedding_file.c_str());
+     	int n_evt_emb=do_emb->GetNumEmbEvents();
+     	se->registerSubsystem(do_emb);
+	std::cout<<std::endl<<embedding_file<<std::endl<<std::endl;
+	//return 0;
+	SQChamberRealization* cal_cr=new SQChamberRealization();	
+	cal_cr->SetChamEff(0.96,0.96,0.96,0.96,0.96);
+ 	cal_cr->FixChamReso(0.04,0.04,0.04,0.04,0.04);
+	se->registerSubsystem(cal_cr);
     }
 
     // tracking module
@@ -608,7 +626,8 @@ int RecoSim(std::string top_dir, std::string data_type, const int nevents = 5,
     }
 
     se->run(nevents);
-
+//se->run(200);
+se->Print();
     // export the geometry
     // PHGeomUtility::ExportGeomtry(se->topNode(),"geom.root");
 
